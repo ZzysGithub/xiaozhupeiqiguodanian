@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>小猪佩奇过大年</title>
+	</head>
+	<body>
+		<canvas id="canvas" style="border: 2px solid red" width="1920" height="1080">
+			此浏览器不支持画板对象
+		</canvas>
+		
+		<embed src="music/music.mp3" hidden="true" autostart="true" loop="true">
+		
+		<script>
+			var canvas = document.getElementById('canvas');
+			var ctx = canvas.getContext('2d');
+            
+            //导入图片
+            var background=new Image();
+            background.src="imgs/background.jpg";
+            
+            
+            var gift_ico=[];
+            
+            for(var i=1;i<=9;i++){
+            	var g=new Image();
+            	g.src="imgs/gift"+i+".png";
+            	gift_ico[gift_ico.length]=g;
+            }
+            
+            var peiqi=new Image();
+            peiqi.src="imgs/peiqi.png";
+            
+            var start=new Image();
+            start.src="imgs/start.jpg";
+            
+            var succeed=new Image();
+            succeed.src="imgs/succeed.jpg";
+            
+            var fail=new Image();
+            fail.src="imgs/fail.jpg";
+            
+            //设定状态
+            var START=1;
+            var RUNNING=2;
+            var FAIL=3;
+            var SUCCEED=4;
+            var state=START;
+            
+            //定时器
+            setInterval(function(){
+            	//检查state的状态
+            	switch(state){
+            		case START:
+            		    ctx.drawImage(start,0,0);            		    
+            		    startTimePlus();
+            		    break;
+            		case RUNNING:
+            		    paintComponent(ctx);           		    
+            	   		componentEnter(ctx);
+            		    break;
+            		case FAIL:
+            		    ctx.drawImage(fail,0,0);
+            		    break;
+            		case SUCCEED:
+            		    ctx.drawImage(succeed,0,0);
+            		    break;
+            	}
+            },1000);
+            
+            var j=0;
+            //执行时间增加
+            function startTimePlus(){
+            	j++; //每一秒钟加1秒
+            	if(j==5){
+            		state=RUNNING;
+            	}
+            }
+            
+            function paintComponent(ctx){
+            	ctx.drawImage(background,0,0);
+            	write(ctx);
+            	peppa.paint(ctx);
+            	for(var i=0;i<gifts.length;i++){
+            		gifts[i].paint(ctx);
+            	}
+            	for (var i=0; i < countGift.length; i++) {
+				  ctx.drawImage(countGift[i],countX[i],countY[i]);
+				};
+            }
+            
+            function write(ctx){
+            	ctx.font="30px 微软雅黑";
+            	ctx.fillStyle="white";
+            	ctx.fillText("时间："+time,400,200);
+            	ctx.fillText("礼物个数",1415,170);
+            	ctx.fillText(count,1465,220);
+            }
+            
+            var time=30;
+            var count=0;  //计算礼物个数
+            
+            //九宫格xy坐标
+            var countX=[];
+            var x = 400;
+            for(var i=0; i<9; i++){
+            	 countX[countX.length]=x;
+            	 x = x +130;
+            	 if(i%3==0){
+            	 	x = 400;
+            	 }
+            }
+            
+            var countY=[];
+			countY[countY.length]=460;
+            countY[countY.length]=460;
+            countY[countY.length]=460;
+            countY[countY.length]=560;
+            countY[countY.length]=560;
+            countY[countY.length]=560;
+            countY[countY.length]=660;
+            countY[countY.length]=660;
+            countY[countY.length]=660;
+            
+            
+            function Gift(x,y,img){
+            	this.x=x;
+            	this.y=y;
+            	this.mouseCatch=false;
+            	this.img=img;
+            	this.paint=function(ctx){
+            		if(this.mouseCatch){
+            			for(var i=0; i<countGift.length; i++){
+            				ctx.drawImage(countGift[i], countX[i], countY[i]);
+            			}	
+            		}
+                    if(!this.mouseCatch){
+            			ctx.drawImage(this.img,this.x,this.y);
+            		}
+            	}
+            }
+                        
+            var giftName=[];
+            var gifts=[];
+            var countGift=[];
+               
+            function Peppa(img){
+            	this.x=960;
+            	this.y=540;
+            	this.width=100;
+            	this.height=150;
+            	this.img=img;
+            	this.paint=function(ctx){
+            		ctx.drawImage(this.img,this.x,this.y)
+            	}
+            	
+            }
+            
+            canvas.onmousemove=function(e){
+            	var mpoint = getPointOnCanvas(e.x, e.y);
+				peppa.x = mpoint.x - peppa.width / 2;
+				peppa.y = mpoint.y - peppa.height / 2;
+            }
+            
+            canvas.onclick=function(e){
+            	var mpoint = getPointOnCanvas(e.x, e.y);
+            	//alert("("+parseInt(mpoint.x)+","+parseInt(mpoint.y)+")");
+            	var x=parseInt(mpoint.x);
+            	var y=parseInt(mpoint.y);
+            	if(x>=580&&x<=940&&y>=300&&y<=320){
+            		var g = gifts[0];
+            		g.mouseCatch=true;
+            		count++; //礼物个数+1
+            		countGift[countGift.length] = g.img;
+            	}
+            	if(x>=1180&&x<=1200&&y>=300&&y<=320){
+            		var g = gifts[1];
+            		g.mouseCatch=true;
+            		count++; //礼物个数+1
+            		countGift[countGift.length] = g.img;
+            	}
+            	if(x>=1440&&x<=1460&&y>=300&&y<=320){
+            		var g = gifts[2];
+            		g.mouseCatch=true;
+            		count++; //礼物个数+1
+            		countGift[countGift.length] = g.img;
+            	}
+            	if(x>=920&&x<=940&&y>=500&&y<=520){
+            		var g = gifts[3];
+            		g.mouseCatch=true;
+            		count++; //礼物个数+1
+            		countGift[countGift.length] = g.img;
+            	}
+            	if(x>=1180&&x<=1200&&y>=500&&y<=520){
+            		var g = gifts[4];
+            		g.mouseCatch=true;
+            		count++; //礼物个数+1
+            		countGift[countGift.length] = g.img;
+            	}
+            	if(x>=1440&&x<=1460&&y>=500&&y<=520){
+            		var g = gifts[5];
+            		g.mouseCatch=true;
+            		count++; //礼物个数+1
+            		countGift[countGift.length] = g.img;
+            	}
+            	if(x>=920&&x<=940&&y>=700&&y<=720){
+            		var g = gifts[6];
+            		g.mouseCatch=true;
+            		count++; //礼物个数+1
+            		countGift[countGift.length] = g.img;
+            	}
+            	if(x>=1180&&x<=1200&&y>=700&&y<=720){
+            		var g = gifts[7];
+            		g.mouseCatch=true;
+            		count++; //礼物个数+1
+            		countGift[countGift.length] = g.img;
+            	}
+            	if(x>=1440&&x<=1460&&y>=700&&y<=720){
+            		var g = gifts[8];
+            		g.mouseCatch=true;
+            		count++; //礼物个数+1
+            		countGift[countGift.length] = g.img;
+            	}
+            }
+            
+            
+            
+            function getPointOnCanvas(x, y) {
+				var bbox = canvas.getBoundingClientRect();
+				return {
+					x : x - bbox.left,
+					y : y - bbox.top
+				};
+			}
+            
+            
+            
+            var peppa=new Peppa(peiqi);
+            var index=0;
+            function showGifts(){
+            	var x_1 = 940; 
+    		    var y_1 = 300;
+    		    var index_1=0;
+    		    
+    		    for(var i=0; i<3; i++){
+    		    	for(var j=0;j<3;j++){
+    		    		   gifts[index_1]=new Gift(x_1,y_1,giftName[index_1]);
+    		    	   	   x_1=x_1+260;
+    		    	   	   index_1++;
+    		    	   	   //index_2++;
+    		    	}
+    		    	x_1=940;
+    		    	y_1=y_1+200;
+    		    }
+            }
+            function componentEnter(ctx){
+            	time--;
+            	 index++;
+            	 if(index>9){
+            		 index=1;
+            	 }
+            	//转到胜利状态
+            	if(count>=9){
+            		state=SUCCEED;
+            	}
+            	//转到失败状态
+            	if(time<=0){
+            		state=FAIL;
+            	}
+
+            	switch(index){
+            		case 1:
+            		    giftName.length=0;
+            			for(var i=0; i<9; i++){
+            				giftName[giftName.length] = gift_ico[i%9];
+            			}
+            		    showGifts();
+            		    break;
+            		case 2:
+            		    giftName.length=0;
+	            		for(var i=1; i<10; i++){
+	            			giftName[giftName.length] = gift_ico[i%9];
+	            		}
+            		    showGifts();   		    
+            		    break;
+            		 case 3:
+            		    giftName.length=0;
+            		 	for(var i=2; i<11; i++){
+	            			giftName[giftName.length] = gift_ico[i%9];
+	            		}
+            		     showGifts();
+            		     break;
+            		 case 4:
+            		    giftName.length=0;
+            		 	for(var i=3; i<12; i++){
+	            			giftName[giftName.length] = gift_ico[i%9];
+	            		}
+            		     showGifts();          		    
+            		     break;
+            		case 5:
+            		    giftName.length=0;
+            			for(var i=4; i<13; i++){
+	            			giftName[giftName.length] = gift_ico[i%9];
+	            		}
+            		    showGifts();         		    
+            		    break;
+            		case 6:
+            		    giftName.length=0;
+            			for(var i=5; i<14; i++){
+	            			giftName[giftName.length] = gift_ico[i%9];
+	            		}
+            		    showGifts();          		    
+            		    break;
+            		case 7:
+            		    giftName.length=0;
+            			for(var i=6; i<15; i++){
+	            			giftName[giftName.length] = gift_ico[i%9];
+	            		}
+            		    showGifts();            		    
+            		    break;
+            		case 8:
+            			giftName.length=0;
+            			for(var i=7; i<16; i++){
+	            			giftName[giftName.length] = gift_ico[i%9];
+	            		}
+            		    showGifts();        		    
+            		    break;
+            		case 9:
+            			giftName.length=0;
+            		    for(var i=8; i<17; i++){
+	            			giftName[giftName.length] = gift_ico[i%9];
+	            		}
+            		    showGifts(); 
+            		    break;
+            	 }
+            }
+            
+            
+		</script>
+	</body>
+</html>
